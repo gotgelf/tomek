@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deutsche Startup Radar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #0a0b0e;
+    --bg-secondary: #12141a;
+    --bg-card: #181b23;
+    --bg-card-hover: #1e2130;
+    --bg-elevated: #222639;
+    --text-primary: #e8eaf0;
+    --text-secondary: #8b90a5;
+    --text-muted: #555a70;
+    --accent-gold: #d4a843;
+    --accent-red: #c23c3c;
+    --accent-black: #1a1a1a;
+    --accent-blue: #4a7fd4;
+    --accent-green: #3da67a;
+    --accent-purple: #7c5cbf;
+    --border-subtle: rgba(255,255,255,0.06);
+    --border-active: rgba(212,168,67,0.4);
+    --shadow-card: 0 2px 12px rgba(0,0,0,0.3);
+    --shadow-elevated: 0 8px 32px rgba(0,0,0,0.4);
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  [data-theme="light"] {
+    --bg-primary: #f4f3ef;
+    --bg-secondary: #eae8e3;
+    --bg-card: #ffffff;
+    --bg-card-hover: #fafaf8;
+    --bg-elevated: #f0eee9;
+    --text-primary: #1a1b1e;
+    --text-secondary: #6b6e7a;
+    --text-muted: #9b9ea8;
+    --border-subtle: rgba(0,0,0,0.08);
+    --border-active: rgba(212,168,67,0.5);
+    --shadow-card: 0 2px 12px rgba(0,0,0,0.06);
+    --shadow-elevated: 0 8px 32px rgba(0,0,0,0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }
+
+  /* ── Header ── */
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-subtle);
+    backdrop-filter: blur(20px);
+    padding: 0 2rem;
+  }
+
+  .header-inner {
+    max-width: 1440px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+
+  .logo {
+    display: flex; align-items: center; gap: 12px;
+  }
+
+  .logo-mark {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, #000 33%, #dd0000 33%, #dd0000 66%, #ffcc00 66%);
+    position: relative; overflow: hidden;
+  }
+  .logo-mark::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, transparent 50%, rgba(255,255,255,0.15) 50%);
+  }
+
+  .logo h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 800; font-size: 1.25rem;
+    letter-spacing: -0.02em;
+  }
+  .logo h1 span { color: var(--accent-gold); }
+
+  .header-actions {
+    display: flex; align-items: center; gap: 16px;
+  }
+
+  .theme-toggle {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: var(--transition);
+    font-size: 1.1rem;
+  }
+  .theme-toggle:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+
+  .export-btn {
+    height: 40px; padding: 0 16px; border-radius: 20px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: pointer; display: flex; align-items: center; gap: 6px;
+    transition: var(--transition);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em;
+    font-weight: 500;
+  }
+  .export-btn:hover { border-color: var(--accent-green); color: var(--accent-green); }
+  .export-btn svg { width: 14px; height: 14px; }
+
+  .live-badge {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--accent-green); font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .live-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent-green);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  /* ── Main layout ── */
+  .app { max-width: 1440px; margin: 0 auto; padding: 1.5rem 2rem 3rem; }
+
+  /* ── Stats bar ── */
+  .stats-bar {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 1.25rem 1.5rem;
+    transition: var(--transition);
+  }
+  .stat-card:hover { border-color: var(--border-active); }
+  .stat-label {
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--text-muted); margin-bottom: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .stat-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.75rem; font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .stat-value.gold { color: var(--accent-gold); }
+  .stat-sub {
+    font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.25rem;
+  }
+
+  /* ── Filters section ── */
+  .filters-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .search-row {
+    display: flex; gap: 12px; margin-bottom: 1.25rem; align-items: stretch;
+  }
+
+  .search-box {
+    flex: 1; position: relative;
+  }
+  .search-box input {
+    width: 100%; height: 44px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 0 1rem 0 2.75rem;
+    color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    transition: var(--transition);
+    outline: none;
+  }
+  .search-box input::placeholder { color: var(--text-muted); }
+  .search-box input:focus { border-color: var(--accent-gold); }
+  .search-icon {
+    position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%);
+    color: var(--text-muted); font-size: 0.95rem; pointer-events: none;
+  }
+
+  .sort-select {
+    height: 44px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 0 2rem 0 1rem;
+    color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem; cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238b90a5'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    outline: none;
+    transition: var(--transition);
+  }
+  .sort-select:focus { border-color: var(--accent-gold); }
+
+  .filter-group { margin-bottom: 1rem; }
+  .filter-group:last-child { margin-bottom: 0; }
+
+  .filter-label {
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--text-muted); margin-bottom: 0.6rem;
+    font-family: 'JetBrains Mono', monospace;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .filter-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--border-subtle);
+  }
+
+  .chips {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 0.8rem; font-weight: 500;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    cursor: pointer; user-select: none;
+    transition: var(--transition);
+    white-space: nowrap;
+  }
+  .chip:hover { border-color: var(--text-muted); color: var(--text-primary); }
+  .chip.active {
+    background: rgba(212,168,67,0.12);
+    border-color: var(--accent-gold);
+    color: var(--accent-gold);
+    font-weight: 600;
+  }
+  .chip .count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem; opacity: 0.7;
+  }
+
+  .clear-filters {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 6px 12px; border-radius: 20px;
+    font-size: 0.75rem; font-weight: 500;
+    background: rgba(194,60,60,0.1);
+    border: 1px solid rgba(194,60,60,0.3);
+    color: var(--accent-red);
+    cursor: pointer; transition: var(--transition);
+  }
+  .clear-filters:hover { background: rgba(194,60,60,0.2); }
+  .clear-filters.hidden { display: none; }
+
+  /* ── Funding chart ── */
+  .chart-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .chart-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--text-muted); margin-bottom: 1.25rem;
+  }
+  .bar-chart {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .bar-row {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .bar-city {
+    width: 90px; text-align: right;
+    font-size: 0.78rem; color: var(--text-secondary);
+    font-weight: 500; flex-shrink: 0;
+  }
+  .bar-track {
+    flex: 1; height: 28px;
+    background: var(--bg-secondary);
+    border-radius: 4px; overflow: hidden;
+    position: relative;
+  }
+  .bar-fill {
+    height: 100%; border-radius: 4px;
+    background: linear-gradient(90deg, var(--accent-gold), #e8c45a);
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex; align-items: center; justify-content: flex-end;
+    padding-right: 8px; min-width: fit-content;
+  }
+  [data-theme="light"] .bar-fill {
+    background: linear-gradient(90deg, #b8922e, var(--accent-gold));
+  }
+  .bar-amount {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; font-weight: 600;
+    color: var(--bg-primary); white-space: nowrap;
+  }
+  .bar-amount-outside {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; font-weight: 500;
+    color: var(--text-muted); margin-left: 8px; white-space: nowrap;
+    min-width: 60px;
+  }
+
+  /* ── Results info ── */
+  .results-info {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1rem;
+  }
+  .results-count {
+    font-size: 0.8rem; color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .results-count strong { color: var(--text-primary); }
+
+  /* ── Cards grid ── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 1rem;
+  }
+
+  .startup-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+    animation: cardIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .startup-card:hover {
+    border-color: var(--border-active);
+    background: var(--bg-card-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-elevated);
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(12px); }
+  }
+
+  .card-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 0.75rem;
+  }
+  .card-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem; font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+  .card-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 3px 8px; border-radius: 4px;
+    font-weight: 600; flex-shrink: 0; margin-left: 12px;
+  }
+  .status-active { background: rgba(61,166,122,0.15); color: var(--accent-green); }
+  .status-acquired { background: rgba(74,127,212,0.15); color: var(--accent-blue); }
+  .status-ipo { background: rgba(124,92,191,0.15); color: var(--accent-purple); }
+
+  .card-meta {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 0.75rem; flex-wrap: wrap;
+  }
+  .card-city, .card-year {
+    font-size: 0.78rem; color: var(--text-secondary);
+    display: flex; align-items: center; gap: 4px;
+  }
+  .card-industry {
+    font-size: 0.7rem; font-weight: 600;
+    padding: 2px 10px; border-radius: 12px;
+    background: rgba(212,168,67,0.1);
+    color: var(--accent-gold);
+  }
+
+  .card-desc {
+    font-size: 0.82rem; line-height: 1.55;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    display: -webkit-box; -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical; overflow: hidden;
+  }
+
+  .card-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 1rem;
+  }
+  .card-stat {
+    text-align: center;
+    padding: 0 0.5rem;
+    border-right: 1px solid var(--border-subtle);
+  }
+  .card-stat:last-child { border-right: none; }
+  .card-stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--text-muted); margin-bottom: 0.25rem;
+  }
+  .card-stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem; font-weight: 600;
+    color: var(--text-primary);
+  }
+  .card-stat-value.funding-val { color: var(--accent-gold); }
+
+  /* ── Expanded card detail ── */
+  .card-detail {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    opacity: 0;
+  }
+  .startup-card.expanded .card-detail {
+    max-height: 200px; opacity: 1;
+  }
+  .startup-card.expanded .card-desc {
+    -webkit-line-clamp: unset;
+  }
+  .card-detail-inner {
+    padding-top: 1rem; border-top: 1px solid var(--border-subtle); margin-top: 1rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-link {
+    font-size: 0.8rem; color: var(--accent-gold);
+    text-decoration: none; font-weight: 500;
+    transition: var(--transition);
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .card-link:hover { text-decoration: underline; }
+  .card-expand-hint {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+
+  /* ── No results ── */
+  .no-results {
+    text-align: center; padding: 4rem 2rem;
+    color: var(--text-muted);
+  }
+  .no-results-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.4; }
+  .no-results h3 { font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
+  .no-results p { font-size: 0.85rem; }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center; padding: 2rem;
+    font-size: 0.7rem; color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .cards-grid { grid-template-columns: 1fr; }
+    .header-inner { padding: 0; }
+    .app { padding: 1rem; }
+  }
+  @media (max-width: 600px) {
+    .stats-bar { grid-template-columns: 1fr; }
+    .search-row { flex-direction: column; }
+    .header { padding: 0 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-mark"></div>
+      <h1>Startup<span>Radar</span>.de</h1>
+    </div>
+    <div class="header-actions">
+      <div class="live-badge"><div class="live-dot"></div> Live Data</div>
+      <button class="export-btn" onclick="exportToExcel()" title="Export filtered data to Excel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        XLSX
+      </button>
+      <button class="export-btn" onclick="exportReport()" title="Generate visual report">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Report
+      </button>
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">&#9681;</button>
+    </div>
+  </div>
+</header>
+
+<main class="app">
+  <section class="stats-bar" id="statsBar"></section>
+
+  <section class="filters-section">
+    <div class="search-row">
+      <div class="search-box">
+        <span class="search-icon">&#x1F50D;</span>
+        <input type="text" id="searchInput" placeholder="Search startups by name, description, or industry...">
+      </div>
+      <select class="sort-select" id="sortSelect">
+        <option value="funding-desc">Funding: High to Low</option>
+        <option value="funding-asc">Funding: Low to High</option>
+        <option value="year-desc">Newest First</option>
+        <option value="year-asc">Oldest First</option>
+        <option value="employees-desc">Most Employees</option>
+        <option value="name-asc">Name A-Z</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-label">Cities</div>
+      <div class="chips" id="cityChips"></div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-label">Industries</div>
+      <div class="chips" id="industryChips"></div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-label">Funding Stage</div>
+      <div class="chips" id="stageChips"></div>
+    </div>
+
+    <div style="margin-top: 1rem; display: flex; justify-content: flex-end;">
+      <button class="clear-filters hidden" id="clearBtn" onclick="clearAllFilters()">&#x2715; Clear all filters</button>
+    </div>
+  </section>
+
+  <section class="chart-section">
+    <div class="chart-title">Funding Distribution by City</div>
+    <div class="bar-chart" id="barChart"></div>
+  </section>
+
+  <div class="results-info">
+    <div class="results-count" id="resultsCount"></div>
+  </div>
+
+  <section class="cards-grid" id="cardsGrid"></section>
+</main>
+
+<footer class="footer">
+  StartupRadar.de &mdash; German Startup Ecosystem Intelligence &mdash; 2026
+</footer>
+
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script>
+// Real data sourced from Tracxn, PitchBook, Crunchbase, TechCrunch & TechFundingNews (2024-2025)
+const STARTUPS = [
+  { name: "Helsing", city: "Munich", industry: "Defence Tech", year: 2021, funding: 854000000, stage: "Series D", employees: 400, description: "AI-powered defence systems with human-in-the-loop oversight, building autonomous decision-making for European security. Valued at $13.2B.", url: "https://helsing.ai", status: "Active" },
+  { name: "Celonis", city: "Munich", industry: "Process Mining", year: 2011, funding: 1400000000, stage: "Series D", employees: 3000, description: "Enterprise process mining and execution management platform mapping workflows in real-time, pinpointing bottlenecks and automating fixes. Valued at $13B.", url: "https://celonis.com", status: "Active" },
+  { name: "N26", city: "Berlin", industry: "FinTech", year: 2013, funding: 1700000000, stage: "Series E", employees: 1500, description: "Mobile-first neobank offering real-time alerts, spending analytics, and fee-free foreign withdrawals across Europe. Valued at $9B.", url: "https://n26.com", status: "Active" },
+  { name: "Personio", city: "Munich", industry: "HR Tech", year: 2015, funding: 725000000, stage: "Series E", employees: 2020, description: "Cloud HR platform consolidating recruiting, onboarding, payroll, time tracking, and performance reviews for SMBs. Valued at $8.5B.", url: "https://personio.com", status: "Active" },
+  { name: "Trade Republic", city: "Berlin", industry: "FinTech", year: 2015, funding: 1300000000, stage: "Series C", employees: 700, description: "Commission-free mobile broker for stocks, ETFs, fractional shares and derivatives with over 4 million customers. Valued at $5.3B.", url: "https://traderepublic.com", status: "Active" },
+  { name: "Mambu", city: "Berlin", industry: "FinTech", year: 2011, funding: 446000000, stage: "Series E", employees: 800, description: "SaaS cloud banking platform powering embedded financial services and Banking-as-a-Service for over 200 banks and fintechs. Valued at $5.5B.", url: "https://mambu.com", status: "Active" },
+  { name: "Wefox", city: "Berlin", industry: "InsurTech", year: 2015, funding: 1629000000, stage: "Private Equity", employees: 1000, description: "Digital insurance platform transforming the industry with technology-driven risk prevention. Acquired by J.C. Flowers in June 2025.", url: "https://wefox.com", status: "Acquired" },
+  { name: "Flix", city: "Munich", industry: "Mobility", year: 2011, funding: 950000000, stage: "Series F", employees: 2500, description: "Operates FlixBus and FlixTrain connecting cities across Europe, North America, and Asia for 80M+ passengers annually. Valued at $3.3B.", url: "https://flixbus.com", status: "Active" },
+  { name: "Contentful", city: "Berlin", industry: "SaaS", year: 2013, funding: 340000000, stage: "Series F", employees: 750, description: "Developer-first headless CMS delivering structured content via APIs across web, mobile, and IoT channels. Valued at $3B.", url: "https://contentful.com", status: "Active" },
+  { name: "Enpal", city: "Berlin", industry: "CleanTech", year: 2017, funding: 1500000000, stage: "Series C", employees: 900, description: "Germany's leading solar-plus-storage subscription service enabling carbon-neutral homes without upfront costs. Valued at $2.5B.", url: "https://enpal.de", status: "Active" },
+  { name: "IONITY", city: "Munich", industry: "CleanTech", year: 2017, funding: 900000000, stage: "Growth", employees: 350, description: "High-power EV charging network delivering up to 350 kW across 24 European countries with open-roaming compatibility. Valued at $2.5B.", url: "https://ionity.eu", status: "Active" },
+  { name: "1KOMMA5\u00B0", city: "Hamburg", industry: "CleanTech", year: 2021, funding: 430000000, stage: "Series C", employees: 3000, description: "AI-managed energy platform orchestrating solar panels, batteries, heat pumps, and EV chargers for climate-neutral homes. Valued at $2.4B.", url: "https://1komma5.com", status: "Active" },
+  { name: "Sennder", city: "Berlin", industry: "Logistics", year: 2015, funding: 400000000, stage: "Series E", employees: 1000, description: "Digital freight marketplace automating load matching, pricing, and real-time tracking for European road transport. Valued at $2.1B.", url: "https://sennder.com", status: "Active" },
+  { name: "Forto", city: "Berlin", industry: "Logistics", year: 2016, funding: 340000000, stage: "Series D", employees: 550, description: "API-first logistics platform streamlining ocean, air, and overland shipments with real-time visibility and cargo financing. Valued at $2.1B.", url: "https://forto.com", status: "Active" },
+  { name: "GetYourGuide", city: "Berlin", industry: "Travel Tech", year: 2009, funding: 1080000000, stage: "Series F", employees: 850, description: "Online marketplace listing 100,000+ tours and activities worldwide with ML-powered personalized recommendations. Valued at $2B.", url: "https://getyourguide.com", status: "Active" },
+  { name: "Razor Group", city: "Berlin", industry: "E-Commerce", year: 2020, funding: 1000000000, stage: "Series D", employees: 600, description: "Technology company acquiring and scaling top Amazon marketplace brands using data-driven operations across 10+ countries.", url: "https://razor-group.com", status: "Active" },
+  { name: "DeepL", city: "Cologne", industry: "AI/ML", year: 2009, funding: 536000000, stage: "Series B", employees: 1570, description: "AI-powered language technology providing the world's most accurate machine translation and writing tools to 500K+ business customers.", url: "https://deepl.com", status: "Active" },
+  { name: "EGYM", city: "Munich", industry: "Fitness Tech", year: 2010, funding: 627000000, stage: "Series G", employees: 700, description: "Smart fitness equipment and digital solutions for gyms and corporate wellness programs. Became a unicorn in 2024 at $1.2B valuation.", url: "https://egym.com", status: "Active" },
+  { name: "Quantum Systems", city: "Munich", industry: "Defence Tech", year: 2015, funding: 618000000, stage: "Series C", employees: 400, description: "Develops advanced eVTOL drone systems for defence and commercial applications, reaching unicorn status in May 2025.", url: "https://quantum-systems.com", status: "Active" },
+  { name: "Isar Aerospace", city: "Munich", industry: "DeepTech", year: 2018, funding: 594000000, stage: "Series C", employees: 400, description: "Launch vehicle manufacturer developing the Spectrum rocket for flexible and cost-efficient small satellite access to orbit.", url: "https://isaraerospace.com", status: "Active" },
+  { name: "Parloa", city: "Berlin", industry: "AI/ML", year: 2018, funding: 562000000, stage: "Series C", employees: 413, description: "Conversational AI platform for enterprise contact centers, reaching $1B unicorn valuation in May 2025.", url: "https://parloa.com", status: "Active" },
+  { name: "n8n", city: "Berlin", industry: "SaaS", year: 2019, funding: 253000000, stage: "Series C", employees: 723, description: "Open-source workflow automation platform for technical teams, unifying AI agents, code, and human building blocks.", url: "https://n8n.io", status: "Active" },
+  { name: "About You", city: "Hamburg", industry: "E-Commerce", year: 2014, funding: 300000000, stage: "IPO", employees: 1500, description: "Personalized fashion e-commerce platform using AI for individualized shopping experiences. Went public on Frankfurt Stock Exchange.", url: "https://aboutyou.com", status: "IPO" },
+  { name: "Staffbase", city: "Chemnitz", industry: "SaaS", year: 2014, funding: 358000000, stage: "Series E", employees: 1000, description: "Employee communications platform helping enterprises reach, engage, and connect their entire workforce across all channels.", url: "https://staffbase.com", status: "Active" },
+  { name: "TIER Mobility", city: "Berlin", industry: "Mobility", year: 2018, funding: 641000000, stage: "Series D", employees: 800, description: "Leading European micro-mobility provider operating shared e-scooters, e-bikes, and e-mopeds across major cities.", url: "https://tier.app", status: "Acquired" },
+  { name: "Spread Group", city: "Leipzig", industry: "E-Commerce", year: 2002, funding: 15000000, stage: "Series A", employees: 645, description: "Custom merchandise and print-on-demand platform with five production sites across the US and Europe, generating \u20AC175M+ annual revenue.", url: "https://spreadgroup.com", status: "Active" }
+];
+
+// ── State ──
+let selectedCities = new Set();
+let selectedIndustries = new Set();
+let selectedStages = new Set();
+let searchQuery = '';
+let sortBy = 'funding-desc';
+
+// ── Helpers ──
+function formatCurrency(n) {
+  if (n >= 1e9) return '€' + (n / 1e9).toFixed(1) + 'B';
+  if (n >= 1e6) return '€' + (n / 1e6).toFixed(0) + 'M';
+  return '€' + (n / 1e3).toFixed(0) + 'K';
+}
+
+function getCities() {
+  const m = {};
+  STARTUPS.forEach(s => m[s.city] = (m[s.city] || 0) + 1);
+  return Object.entries(m).sort((a,b) => b[1] - a[1]);
+}
+function getIndustries() {
+  const m = {};
+  STARTUPS.forEach(s => m[s.industry] = (m[s.industry] || 0) + 1);
+  return Object.entries(m).sort((a,b) => b[1] - a[1]);
+}
+function getStages() {
+  const m = {};
+  STARTUPS.forEach(s => m[s.stage] = (m[s.stage] || 0) + 1);
+  return Object.entries(m).sort((a,b) => b[1] - a[1]);
+}
+
+// ── Filter logic ──
+function getFiltered() {
+  let data = [...STARTUPS];
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    data = data.filter(s =>
+      s.name.toLowerCase().includes(q) ||
+      s.description.toLowerCase().includes(q) ||
+      s.industry.toLowerCase().includes(q) ||
+      s.city.toLowerCase().includes(q)
+    );
+  }
+  if (selectedCities.size) data = data.filter(s => selectedCities.has(s.city));
+  if (selectedIndustries.size) data = data.filter(s => selectedIndustries.has(s.industry));
+  if (selectedStages.size) data = data.filter(s => selectedStages.has(s.stage));
+
+  const [key, dir] = sortBy.split('-');
+  data.sort((a, b) => {
+    let va, vb;
+    if (key === 'funding') { va = a.funding; vb = b.funding; }
+    else if (key === 'year') { va = a.year; vb = b.year; }
+    else if (key === 'employees') { va = a.employees; vb = b.employees; }
+    else if (key === 'name') { va = a.name.toLowerCase(); vb = b.name.toLowerCase(); }
+    if (dir === 'asc') return va > vb ? 1 : -1;
+    return va < vb ? 1 : -1;
+  });
+  return data;
+}
+
+// ── Render ──
+function renderStats(data) {
+  const total = data.length;
+  const totalFunding = data.reduce((s, d) => s + d.funding, 0);
+  const avgFunding = total ? totalFunding / total : 0;
+  const cityCount = {};
+  data.forEach(s => cityCount[s.city] = (cityCount[s.city] || 0) + 1);
+  const topCity = Object.entries(cityCount).sort((a,b) => b[1] - a[1])[0];
+
+  document.getElementById('statsBar').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">Startups Shown</div>
+      <div class="stat-value">${total}</div>
+      <div class="stat-sub">of ${STARTUPS.length} total</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Funding</div>
+      <div class="stat-value gold">${formatCurrency(totalFunding)}</div>
+      <div class="stat-sub">combined capital raised</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Avg Funding</div>
+      <div class="stat-value">${formatCurrency(avgFunding)}</div>
+      <div class="stat-sub">per startup</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Top City</div>
+      <div class="stat-value">${topCity ? topCity[0] : '—'}</div>
+      <div class="stat-sub">${topCity ? topCity[1] + ' startups' : ''}</div>
+    </div>
+  `;
+}
+
+function renderChips() {
+  const cityChips = getCities().map(([city, count]) =>
+    `<div class="chip ${selectedCities.has(city) ? 'active' : ''}" onclick="toggleFilter('city','${city}')">${city} <span class="count">${count}</span></div>`
+  ).join('');
+  document.getElementById('cityChips').innerHTML = cityChips;
+
+  const industryChips = getIndustries().map(([ind, count]) =>
+    `<div class="chip ${selectedIndustries.has(ind) ? 'active' : ''}" onclick="toggleFilter('industry','${ind}')">${ind} <span class="count">${count}</span></div>`
+  ).join('');
+  document.getElementById('industryChips').innerHTML = industryChips;
+
+  const stageChips = getStages().map(([stage, count]) =>
+    `<div class="chip ${selectedStages.has(stage) ? 'active' : ''}" onclick="toggleFilter('stage','${stage}')">${stage} <span class="count">${count}</span></div>`
+  ).join('');
+  document.getElementById('stageChips').innerHTML = stageChips;
+
+  const hasFilters = selectedCities.size || selectedIndustries.size || selectedStages.size || searchQuery;
+  document.getElementById('clearBtn').classList.toggle('hidden', !hasFilters);
+}
+
+function renderChart(data) {
+  const cityFunding = {};
+  data.forEach(s => cityFunding[s.city] = (cityFunding[s.city] || 0) + s.funding);
+  const sorted = Object.entries(cityFunding).sort((a,b) => b[1] - a[1]);
+  const max = sorted.length ? sorted[0][1] : 1;
+
+  document.getElementById('barChart').innerHTML = sorted.map(([city, amount]) => {
+    const pct = Math.max((amount / max) * 100, 4);
+    const showInside = pct > 20;
+    return `<div class="bar-row">
+      <div class="bar-city">${city}</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${pct}%">
+          ${showInside ? `<span class="bar-amount">${formatCurrency(amount)}</span>` : ''}
+        </div>
+      </div>
+      ${!showInside ? `<span class="bar-amount-outside">${formatCurrency(amount)}</span>` : '<span class="bar-amount-outside"></span>'}
+    </div>`;
+  }).join('');
+}
+
+function renderCards(data) {
+  if (!data.length) {
+    document.getElementById('cardsGrid').innerHTML = `
+      <div class="no-results" style="grid-column: 1/-1;">
+        <div class="no-results-icon">&#x1F50D;</div>
+        <h3>No startups found</h3>
+        <p>Try adjusting your filters or search query</p>
+      </div>`;
+    document.getElementById('resultsCount').innerHTML = '<strong>0</strong> results';
+    return;
+  }
+
+  document.getElementById('resultsCount').innerHTML = `Showing <strong>${data.length}</strong> of ${STARTUPS.length} startups`;
+
+  document.getElementById('cardsGrid').innerHTML = data.map((s, i) => {
+    const statusClass = s.status === 'Active' ? 'status-active' : s.status === 'IPO' ? 'status-ipo' : 'status-acquired';
+    return `<div class="startup-card" style="animation-delay:${i * 0.04}s" onclick="this.classList.toggle('expanded')">
+      <div class="card-header">
+        <div class="card-name">${s.name}</div>
+        <div class="card-status ${statusClass}">${s.status}</div>
+      </div>
+      <div class="card-meta">
+        <span class="card-city">&#x1F4CD; ${s.city}</span>
+        <span class="card-year">&#x1F4C5; ${s.year}</span>
+        <span class="card-industry">${s.industry}</span>
+      </div>
+      <div class="card-desc">${s.description}</div>
+      <div class="card-stats">
+        <div class="card-stat">
+          <div class="card-stat-label">Funding</div>
+          <div class="card-stat-value funding-val">${formatCurrency(s.funding)}</div>
+        </div>
+        <div class="card-stat">
+          <div class="card-stat-label">Stage</div>
+          <div class="card-stat-value">${s.stage}</div>
+        </div>
+        <div class="card-stat">
+          <div class="card-stat-label">Team</div>
+          <div class="card-stat-value">${s.employees.toLocaleString()}</div>
+        </div>
+      </div>
+      <div class="card-detail">
+        <div class="card-detail-inner">
+          <a class="card-link" href="${s.url}" target="_blank" onclick="event.stopPropagation()">Visit website &#x2197;</a>
+          <span class="card-expand-hint">Click to collapse</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function render() {
+  const data = getFiltered();
+  renderStats(data);
+  renderChips();
+  renderChart(data);
+  renderCards(data);
+}
+
+// ── Event handlers ──
+function toggleFilter(type, value) {
+  const set = type === 'city' ? selectedCities : type === 'industry' ? selectedIndustries : selectedStages;
+  if (set.has(value)) set.delete(value); else set.add(value);
+  render();
+}
+
+function clearAllFilters() {
+  selectedCities.clear();
+  selectedIndustries.clear();
+  selectedStages.clear();
+  searchQuery = '';
+  document.getElementById('searchInput').value = '';
+  render();
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+}
+
+document.getElementById('searchInput').addEventListener('input', function(e) {
+  searchQuery = e.target.value.trim();
+  render();
+});
+
+document.getElementById('sortSelect').addEventListener('change', function(e) {
+  sortBy = e.target.value;
+  render();
+});
+
+// ── Export to Excel ──
+function exportToExcel() {
+  const data = getFiltered();
+  const rows = data.map(s => ({
+    'Name': s.name,
+    'City': s.city,
+    'Industry': s.industry,
+    'Founded': s.year,
+    'Total Funding (€)': s.funding,
+    'Funding Stage': s.stage,
+    'Employees': s.employees,
+    'Status': s.status,
+    'Description': s.description,
+    'Website': s.url
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(rows);
+
+  // Column widths
+  ws['!cols'] = [
+    { wch: 20 }, // Name
+    { wch: 12 }, // City
+    { wch: 16 }, // Industry
+    { wch: 9 },  // Founded
+    { wch: 18 }, // Funding
+    { wch: 15 }, // Stage
+    { wch: 11 }, // Employees
+    { wch: 10 }, // Status
+    { wch: 60 }, // Description
+    { wch: 30 }, // Website
+  ];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'German Startups');
+  XLSX.writeFile(wb, 'german_startups_export.xlsx');
+}
+
+// ── Export Report ──
+function exportReport() {
+  const data = getFiltered();
+  const totalFunding = data.reduce((s, d) => s + d.funding, 0);
+  const avgFunding = data.length ? totalFunding / data.length : 0;
+  const totalEmployees = data.reduce((s, d) => s + d.employees, 0);
+
+  // Aggregate data
+  const cityFunding = {}, cityCount = {}, industryFunding = {}, industryCount = {};
+  const stageDist = {}, yearDist = {}, statusDist = {};
+  data.forEach(s => {
+    cityFunding[s.city] = (cityFunding[s.city] || 0) + s.funding;
+    cityCount[s.city] = (cityCount[s.city] || 0) + 1;
+    industryFunding[s.industry] = (industryFunding[s.industry] || 0) + s.funding;
+    industryCount[s.industry] = (industryCount[s.industry] || 0) + 1;
+    stageDist[s.stage] = (stageDist[s.stage] || 0) + 1;
+    const decade = s.year < 2015 ? 'Pre-2015' : s.year < 2018 ? '2015-2017' : s.year < 2021 ? '2018-2020' : '2021+';
+    yearDist[decade] = (yearDist[decade] || 0) + 1;
+    statusDist[s.status] = (statusDist[s.status] || 0) + 1;
+  });
+
+  const sortedCityFunding = Object.entries(cityFunding).sort((a,b) => b[1]-a[1]);
+  const sortedIndustryFunding = Object.entries(industryFunding).sort((a,b) => b[1]-a[1]);
+  const sortedStage = Object.entries(stageDist).sort((a,b) => b[1]-a[1]);
+  const top10 = [...data].sort((a,b) => b.funding - a.funding).slice(0, 10);
+
+  // City avg funding
+  const cityAvg = sortedCityFunding.map(([c, f]) => [c, f / cityCount[c]]);
+
+  // Industry employee density
+  const industryEmp = {};
+  data.forEach(s => industryEmp[s.industry] = (industryEmp[s.industry] || 0) + s.employees);
+  const sortedIndustryEmp = Object.entries(industryEmp).sort((a,b) => b[1]-a[1]);
+
+  const fmtM = (n) => n >= 1e9 ? (n/1e9).toFixed(1)+'B' : (n/1e6).toFixed(0)+'M';
+  const fmtE = (n) => n >= 1e9 ? '\u20AC'+(n/1e9).toFixed(1)+'B' : '\u20AC'+(n/1e6).toFixed(0)+'M';
+
+  const colors = ['#d4a843','#e8c45a','#4a7fd4','#3da67a','#7c5cbf','#c23c3c','#e07c4f','#5bb8d4','#d45a9e','#8bc24a','#ff9f43','#6c5ce7','#00cec9','#fd79a8','#636e72'];
+
+  const reportHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>German Startup Ecosystem Report</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"><\/script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  @media print {
+    .page-break { page-break-before: always; }
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .no-print { display: none !important; }
+  }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #0a0b0e; color: #e8eaf0;
+    line-height: 1.6;
+  }
+  .report { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+
+  /* Cover */
+  .cover {
+    min-height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .cover::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 40%, rgba(212,168,67,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 60%, rgba(74,127,212,0.06) 0%, transparent 60%);
+  }
+  .cover-flag {
+    width: 80px; height: 52px; border-radius: 6px; margin-bottom: 2rem;
+    background: linear-gradient(180deg, #000 33%, #dd0000 33%, #dd0000 66%, #ffcc00 66%);
+    position: relative; z-index: 1;
+  }
+  .cover h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem; font-weight: 900; letter-spacing: -0.03em;
+    margin-bottom: 0.5rem; position: relative; z-index: 1;
+  }
+  .cover h1 span { color: #d4a843; }
+  .cover .subtitle {
+    font-size: 1.1rem; color: #8b90a5; margin-bottom: 3rem;
+    position: relative; z-index: 1;
+  }
+  .cover-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem;
+    position: relative; z-index: 1; width: 100%;
+  }
+  .cover-stat {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px; padding: 1.5rem; text-align: center;
+  }
+  .cover-stat-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; font-weight: 800; color: #d4a843;
+  }
+  .cover-stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: #8b90a5; margin-top: 0.5rem;
+  }
+  .cover-date {
+    margin-top: 3rem; font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem; color: #555a70; position: relative; z-index: 1;
+  }
+
+  /* Sections */
+  .section { margin-bottom: 3rem; }
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 1.5rem; padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem; color: #d4a843;
+    background: rgba(212,168,67,0.1); padding: 4px 10px;
+    border-radius: 4px; font-weight: 600;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; font-weight: 800;
+  }
+
+  /* Charts */
+  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .chart-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; padding: 1.5rem;
+  }
+  .chart-card.full { grid-column: 1 / -1; }
+  .chart-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.12em;
+    color: #8b90a5; margin-bottom: 1rem;
+  }
+  .chart-canvas-wrap { position: relative; width: 100%; }
+  .chart-canvas-wrap canvas { width: 100% !important; }
+
+  /* Insight boxes */
+  .insights-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+  .insight-box {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px; padding: 1.25rem;
+  }
+  .insight-box.highlight { border-color: rgba(212,168,67,0.3); background: rgba(212,168,67,0.04); }
+  .insight-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: #8b90a5; margin-bottom: 0.4rem;
+  }
+  .insight-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-weight: 800; margin-bottom: 0.2rem;
+  }
+  .insight-value.gold { color: #d4a843; }
+  .insight-desc { font-size: 0.78rem; color: #8b90a5; }
+
+  /* Table */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  .data-table th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: #8b90a5; text-align: left; padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-weight: 500;
+  }
+  .data-table td {
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .data-table tr:hover { background: rgba(255,255,255,0.02); }
+  .rank {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600; color: #d4a843; font-size: 0.75rem;
+  }
+  .funding-cell {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600; color: #d4a843;
+  }
+  .status-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 2px 8px; border-radius: 4px; font-weight: 600;
+  }
+  .pill-active { background: rgba(61,166,122,0.15); color: #3da67a; }
+  .pill-acquired { background: rgba(74,127,212,0.15); color: #4a7fd4; }
+  .pill-ipo { background: rgba(124,92,191,0.15); color: #7c5cbf; }
+
+  /* Print button */
+  .print-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(10,11,14,0.95); backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 0.75rem 2rem; display: flex; justify-content: flex-end; gap: 12px;
+  }
+  .print-btn {
+    padding: 8px 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(212,168,67,0.15); color: #d4a843;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+    font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .print-btn:hover { background: rgba(212,168,67,0.25); }
+  .print-spacer { height: 60px; }
+
+  /* Footer */
+  .report-footer {
+    text-align: center; padding: 2rem; margin-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem; color: #555a70; letter-spacing: 0.05em;
+  }
+</style>
+</head>
+<body>
+
+<div class="print-bar no-print">
+  <button class="print-btn" onclick="window.print()">Print / Save PDF</button>
+</div>
+<div class="print-spacer no-print"></div>
+
+<div class="report">
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-flag"></div>
+  <h1>German Startup <span>Ecosystem</span></h1>
+  <div class="subtitle">Investment & Growth Report \u2014 ${data.length} Companies Analyzed</div>
+  <div class="cover-stats">
+    <div class="cover-stat">
+      <div class="cover-stat-value">${data.length}</div>
+      <div class="cover-stat-label">Startups</div>
+    </div>
+    <div class="cover-stat">
+      <div class="cover-stat-value">\u20AC${fmtM(totalFunding)}</div>
+      <div class="cover-stat-label">Total Funding</div>
+    </div>
+    <div class="cover-stat">
+      <div class="cover-stat-value">${totalEmployees.toLocaleString()}</div>
+      <div class="cover-stat-label">Total Employees</div>
+    </div>
+    <div class="cover-stat">
+      <div class="cover-stat-value">${Object.keys(cityCount).length}</div>
+      <div class="cover-stat-label">Cities</div>
+    </div>
+  </div>
+  <div class="cover-date">Generated ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+</div>
+
+<!-- KEY INSIGHTS -->
+<div class="page-break"></div>
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2 class="section-title">Key Insights</h2>
+  </div>
+  <div class="insights-grid">
+    <div class="insight-box highlight">
+      <div class="insight-title">Avg Funding per Startup</div>
+      <div class="insight-value gold">${fmtE(avgFunding)}</div>
+      <div class="insight-desc">Across ${data.length} companies</div>
+    </div>
+    <div class="insight-box">
+      <div class="insight-title">Largest Raise</div>
+      <div class="insight-value">${top10[0]?.name || '-'}</div>
+      <div class="insight-desc">${top10[0] ? fmtE(top10[0].funding)+' \u2014 '+top10[0].industry : ''}</div>
+    </div>
+    <div class="insight-box">
+      <div class="insight-title">Top City by Funding</div>
+      <div class="insight-value">${sortedCityFunding[0]?.[0] || '-'}</div>
+      <div class="insight-desc">${sortedCityFunding[0] ? fmtE(sortedCityFunding[0][1])+' across '+cityCount[sortedCityFunding[0][0]]+' startups' : ''}</div>
+    </div>
+    <div class="insight-box">
+      <div class="insight-title">Top Industry by Funding</div>
+      <div class="insight-value gold">${sortedIndustryFunding[0]?.[0] || '-'}</div>
+      <div class="insight-desc">${sortedIndustryFunding[0] ? fmtE(sortedIndustryFunding[0][1]) : ''}</div>
+    </div>
+    <div class="insight-box">
+      <div class="insight-title">Most Common Stage</div>
+      <div class="insight-value">${sortedStage[0]?.[0] || '-'}</div>
+      <div class="insight-desc">${sortedStage[0] ? sortedStage[0][1]+' companies' : ''}</div>
+    </div>
+    <div class="insight-box">
+      <div class="insight-title">Avg Team Size</div>
+      <div class="insight-value">${data.length ? Math.round(totalEmployees/data.length).toLocaleString() : '-'}</div>
+      <div class="insight-desc">${totalEmployees.toLocaleString()} total employees</div>
+    </div>
+  </div>
+</div>
+
+<!-- FUNDING BY CITY -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2 class="section-title">Funding by City</h2>
+  </div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <div class="chart-label">Total Funding Raised by City</div>
+      <div class="chart-canvas-wrap"><canvas id="chartCityFunding"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-label">Average Funding per Startup by City</div>
+      <div class="chart-canvas-wrap"><canvas id="chartCityAvg"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- FUNDING BY INDUSTRY -->
+<div class="page-break"></div>
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2 class="section-title">Industry Breakdown</h2>
+  </div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <div class="chart-label">Total Funding by Industry</div>
+      <div class="chart-canvas-wrap"><canvas id="chartIndustryFunding"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-label">Total Employees by Industry</div>
+      <div class="chart-canvas-wrap"><canvas id="chartIndustryEmp"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- STAGE & VINTAGE -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2 class="section-title">Stage Distribution & Founding Era</h2>
+  </div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <div class="chart-label">Startups by Funding Stage</div>
+      <div class="chart-canvas-wrap" style="max-width:350px;margin:0 auto"><canvas id="chartStage"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-label">Founding Year Distribution</div>
+      <div class="chart-canvas-wrap" style="max-width:350px;margin:0 auto"><canvas id="chartYear"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOP 10 TABLE -->
+<div class="page-break"></div>
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2 class="section-title">Top 10 by Total Funding</h2>
+  </div>
+  <div class="chart-card full" style="overflow-x:auto">
+    <table class="data-table">
+      <thead>
+        <tr><th>#</th><th>Company</th><th>City</th><th>Industry</th><th>Founded</th><th>Funding</th><th>Stage</th><th>Employees</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        ${top10.map((s, i) => {
+          const pillClass = s.status === 'Active' ? 'pill-active' : s.status === 'IPO' ? 'pill-ipo' : 'pill-acquired';
+          return `<tr>
+            <td class="rank">${String(i+1).padStart(2,'0')}</td>
+            <td><strong>${s.name}</strong></td>
+            <td>${s.city}</td>
+            <td>${s.industry}</td>
+            <td>${s.year}</td>
+            <td class="funding-cell">${fmtE(s.funding)}</td>
+            <td>${s.stage}</td>
+            <td>${s.employees.toLocaleString()}</td>
+            <td><span class="status-pill ${pillClass}">${s.status}</span></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- FULL DIRECTORY -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <h2 class="section-title">Full Directory (${data.length} Companies)</h2>
+  </div>
+  <div class="chart-card full" style="overflow-x:auto">
+    <table class="data-table">
+      <thead>
+        <tr><th>#</th><th>Company</th><th>City</th><th>Industry</th><th>Founded</th><th>Funding</th><th>Stage</th><th>Employees</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        ${data.map((s, i) => {
+          const pillClass = s.status === 'Active' ? 'pill-active' : s.status === 'IPO' ? 'pill-ipo' : 'pill-acquired';
+          return `<tr>
+            <td class="rank">${String(i+1).padStart(2,'0')}</td>
+            <td><strong>${s.name}</strong></td>
+            <td>${s.city}</td>
+            <td>${s.industry}</td>
+            <td>${s.year}</td>
+            <td class="funding-cell">${fmtE(s.funding)}</td>
+            <td>${s.stage}</td>
+            <td>${s.employees.toLocaleString()}</td>
+            <td><span class="status-pill ${pillClass}">${s.status}</span></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="report-footer">
+  StartupRadar.de \u2014 German Startup Ecosystem Intelligence \u2014 Report generated ${new Date().toLocaleDateString('en-GB')}
+</div>
+
+</div>
+
+<script>
+Chart.defaults.color = '#8b90a5';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+
+const pal = ${JSON.stringify(colors)};
+
+// City Funding Bar
+new Chart(document.getElementById('chartCityFunding'), {
+  type: 'bar',
+  data: {
+    labels: ${JSON.stringify(sortedCityFunding.map(c => c[0]))},
+    datasets: [{
+      data: ${JSON.stringify(sortedCityFunding.map(c => +(c[1]/1e6).toFixed(0)))},
+      backgroundColor: pal.slice(0, ${sortedCityFunding.length}),
+      borderRadius: 4, barThickness: 28,
+    }]
+  },
+  options: {
+    indexAxis: 'y', responsive: true, plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { callback: v => '\u20AC'+v+'M' }, grid: { display: false } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// City Avg Funding
+new Chart(document.getElementById('chartCityAvg'), {
+  type: 'bar',
+  data: {
+    labels: ${JSON.stringify(cityAvg.map(c => c[0]))},
+    datasets: [{
+      data: ${JSON.stringify(cityAvg.map(c => +(c[1]/1e6).toFixed(0)))},
+      backgroundColor: pal.slice(0, ${cityAvg.length}),
+      borderRadius: 4, barThickness: 28,
+    }]
+  },
+  options: {
+    indexAxis: 'y', responsive: true, plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { callback: v => '\u20AC'+v+'M' }, grid: { display: false } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// Industry Funding Bar
+new Chart(document.getElementById('chartIndustryFunding'), {
+  type: 'bar',
+  data: {
+    labels: ${JSON.stringify(sortedIndustryFunding.map(c => c[0]))},
+    datasets: [{
+      data: ${JSON.stringify(sortedIndustryFunding.map(c => +(c[1]/1e6).toFixed(0)))},
+      backgroundColor: pal.slice(0, ${sortedIndustryFunding.length}),
+      borderRadius: 4, barThickness: 22,
+    }]
+  },
+  options: {
+    indexAxis: 'y', responsive: true, plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { callback: v => '\u20AC'+v+'M' }, grid: { display: false } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// Industry Employees
+new Chart(document.getElementById('chartIndustryEmp'), {
+  type: 'bar',
+  data: {
+    labels: ${JSON.stringify(sortedIndustryEmp.map(c => c[0]))},
+    datasets: [{
+      data: ${JSON.stringify(sortedIndustryEmp.map(c => c[1]))},
+      backgroundColor: pal.slice(0, ${sortedIndustryEmp.length}),
+      borderRadius: 4, barThickness: 22,
+    }]
+  },
+  options: {
+    indexAxis: 'y', responsive: true, plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// Stage Doughnut
+new Chart(document.getElementById('chartStage'), {
+  type: 'doughnut',
+  data: {
+    labels: ${JSON.stringify(sortedStage.map(c => c[0]))},
+    datasets: [{
+      data: ${JSON.stringify(sortedStage.map(c => c[1]))},
+      backgroundColor: pal.slice(0, ${sortedStage.length}),
+      borderWidth: 0,
+    }]
+  },
+  options: {
+    responsive: true, cutout: '55%',
+    plugins: { legend: { position: 'bottom', labels: { padding: 12, boxWidth: 12, font: { size: 11 } } } }
+  }
+});
+
+// Year Doughnut
+const yearOrder = ['Pre-2015','2015-2017','2018-2020','2021+'];
+const yearData = yearOrder.map(y => ${JSON.stringify(yearDist)}[y] || 0);
+new Chart(document.getElementById('chartYear'), {
+  type: 'doughnut',
+  data: {
+    labels: yearOrder,
+    datasets: [{
+      data: yearData,
+      backgroundColor: ['#c23c3c','#d4a843','#4a7fd4','#3da67a'],
+      borderWidth: 0,
+    }]
+  },
+  options: {
+    responsive: true, cutout: '55%',
+    plugins: { legend: { position: 'bottom', labels: { padding: 12, boxWidth: 12, font: { size: 11 } } } }
+  }
+});
+<\/script>
+</body>
+</html>`;
+
+  const w = window.open('', '_blank');
+  w.document.write(reportHTML);
+  w.document.close();
+}
+
+// ── Init ──
+render();
+</script>
+</body>
+</html>
